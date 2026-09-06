@@ -32,7 +32,7 @@ async def resolve_client(ctx, connection_id: str = "") -> AgorapulseClient:
     effects=["create:connection"],
     data_model=ConnectionRecord
 )
-async def connect_agorapulse(ctx, params: ConnectParams) -> ActionResult:
+async def connect_agorapulse(params: ConnectParams, ctx) -> ActionResult:
     client = AgorapulseClient(access_token=params.access_token, base_url=params.base_url)
     res = await client.verify_auth()
     if res.get("status") == "error":
@@ -61,7 +61,7 @@ async def connect_agorapulse(ctx, params: ConnectParams) -> ActionResult:
     effects=["read:connections"],
     data_model=ConnectionList
 )
-async def list_connections(ctx, params: NoParams) -> ActionResult:
+async def list_connections(params: NoParams, ctx) -> ActionResult:
     conns = await ctx.store.get("connections", [])
     records = [ConnectionRecord(**{k: v for k, v in c.items() if k != "access_token"}) for c in conns]
     return ActionResult.ok(ConnectionList(connections=records, total=len(records)), summary=f"Found {len(records)} connection(s).")
@@ -75,7 +75,7 @@ async def list_connections(ctx, params: NoParams) -> ActionResult:
     effects=["delete:connection"],
     data_model=DeleteResult
 )
-async def disconnect_agorapulse(ctx, params: ConnectionIdParams) -> ActionResult:
+async def disconnect_agorapulse(params: ConnectionIdParams, ctx) -> ActionResult:
     conns = await ctx.store.get("connections", [])
     new_conns = [c for c in conns if c.get("id") != params.connection_id]
     if len(new_conns) == len(conns):
