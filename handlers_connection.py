@@ -4,7 +4,7 @@ import uuid
 from typing import Any
 from imperal_sdk import ActionResult
 from app import chat
-from schemas import ConnectParams, ConnectionIdParams, ConnectionRecord, ConnectionList, DeleteResult
+from schemas import NoParams, ConnectParams, ConnectionIdParams, ConnectionRecord, ConnectionList, DeleteResult
 from agorapulse_client import AgorapulseClient
 
 async def resolve_client(ctx, connection_id: str = "") -> AgorapulseClient:
