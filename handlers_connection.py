@@ -62,7 +62,7 @@ async def connect_agorapulse(ctx, params: ConnectParams) -> ActionResult:
     data_model=ConnectionList
 )
 async def list_connections(ctx, params: NoParams) -> ActionResult:
-    conns = await ctx.store.get("connections", [])
+    conns = (await ctx.store.get("connections", [])) or []
     records = [ConnectionRecord(**{k: v for k, v in c.items() if k != "access_token"}) for c in conns]
     return ActionResult.success(ConnectionList(connections=records, total=len(records)), summary=f"Found {len(records)} connection(s).")
 
@@ -76,7 +76,7 @@ async def list_connections(ctx, params: NoParams) -> ActionResult:
     data_model=DeleteResult
 )
 async def disconnect_agorapulse(ctx, params: ConnectionIdParams) -> ActionResult:
-    conns = await ctx.store.get("connections", [])
+    conns = (await ctx.store.get("connections", [])) or []
     new_conns = [c for c in conns if c.get("id") != params.connection_id]
     if len(new_conns) == len(conns):
         return ActionResult.error(f"Connection {params.connection_id} not found.")
