@@ -31,7 +31,7 @@ async def list_profiles(params: ListProfilesParams, ctx) -> ActionResult:
             raw=p
         ) for p in items
     ]
-    return ActionResult.ok(ProfileList(profiles=records, total=len(records)), summary=f"Loaded {len(records)} profiles.")
+    return ActionResult.success(ProfileList(profiles=records, total=len(records)), summary=f"Loaded {len(records)} profiles.")
 
 @chat.function(
     "list_posts",
@@ -55,7 +55,7 @@ async def list_posts(params: ListPostsParams, ctx) -> ActionResult:
             raw=p
         ) for p in items
     ]
-    return ActionResult.ok(PostList(posts=records, total=len(records)), summary=f"Found {len(records)} posts.")
+    return ActionResult.success(PostList(posts=records, total=len(records)), summary=f"Found {len(records)} posts.")
 
 @chat.function(
     "create_post",
@@ -79,7 +79,7 @@ async def create_post(params: PublishPostParams, ctx) -> ActionResult:
         scheduled_at=params.scheduled_at,
         raw=res
     )
-    return ActionResult.ok(rec, summary=f"Created post {rec.id} for profile {params.profile_id}.")
+    return ActionResult.success(rec, summary=f"Created post {rec.id} for profile {params.profile_id}.")
 
 @chat.function(
     "delete_post",
@@ -95,7 +95,7 @@ async def delete_post(params: DeletePostParams, ctx) -> ActionResult:
     ok = await client.delete_post(post_id=params.post_id)
     if not ok:
         return ActionResult.error(f"Could not delete post {params.post_id}.")
-    return ActionResult.ok(DeleteResult(success=True, message=f"Deleted post {params.post_id}."), summary="Deleted post successfully.")
+    return ActionResult.success(DeleteResult(success=True, message=f"Deleted post {params.post_id}."), summary="Deleted post successfully.")
 
 @chat.function(
     "list_inbox",
@@ -119,7 +119,7 @@ async def list_inbox(params: ListInboxParams, ctx) -> ActionResult:
             created_at=i.get("created_at")
         ) for i in items
     ]
-    return ActionResult.ok(InboxList(items=records, total=len(records)), summary=f"Found {len(records)} inbox items.")
+    return ActionResult.success(InboxList(items=records, total=len(records)), summary=f"Found {len(records)} inbox items.")
 
 @chat.function(
     "audit_social_health",
@@ -141,4 +141,4 @@ async def audit_social_health(params: ConnectionIdParams, ctx) -> ActionResult:
         unread_inbox_items=len(inbox),
         status="healthy" if len(profiles) > 0 else "no_profiles_connected"
     )
-    return ActionResult.ok(result, summary=f"Agorapulse health audit: {len(profiles)} profiles, {len(posts)} posts, {len(inbox)} inbox items.")
+    return ActionResult.success(result, summary=f"Agorapulse health audit: {len(profiles)} profiles, {len(posts)} posts, {len(inbox)} inbox items.")

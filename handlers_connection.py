@@ -50,7 +50,7 @@ async def connect_agorapulse(params: ConnectParams, ctx) -> ActionResult:
     }
     connections.append(record)
     await ctx.store.set("connections", connections)
-    return ActionResult.ok(ConnectionRecord(**{k: v for k, v in record.items() if k != "access_token"}), summary=f"Connected Agorapulse ({record['label']}) successfully.")
+    return ActionResult.success(ConnectionRecord(**{k: v for k, v in record.items() if k != "access_token"}), summary=f"Connected Agorapulse ({record['label']}) successfully.")
 
 @chat.function(
     "list_connections",
@@ -64,7 +64,7 @@ async def connect_agorapulse(params: ConnectParams, ctx) -> ActionResult:
 async def list_connections(params: NoParams, ctx) -> ActionResult:
     conns = await ctx.store.get("connections", [])
     records = [ConnectionRecord(**{k: v for k, v in c.items() if k != "access_token"}) for c in conns]
-    return ActionResult.ok(ConnectionList(connections=records, total=len(records)), summary=f"Found {len(records)} connection(s).")
+    return ActionResult.success(ConnectionList(connections=records, total=len(records)), summary=f"Found {len(records)} connection(s).")
 
 @chat.function(
     "disconnect_agorapulse",
@@ -81,4 +81,4 @@ async def disconnect_agorapulse(params: ConnectionIdParams, ctx) -> ActionResult
     if len(new_conns) == len(conns):
         return ActionResult.error(f"Connection {params.connection_id} not found.")
     await ctx.store.set("connections", new_conns)
-    return ActionResult.ok(DeleteResult(success=True, message=f"Disconnected Agorapulse account {params.connection_id}."), summary="Disconnected connection successfully.")
+    return ActionResult.success(DeleteResult(success=True, message=f"Disconnected Agorapulse account {params.connection_id}."), summary="Disconnected connection successfully.")
