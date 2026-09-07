@@ -19,7 +19,7 @@ from schemas import (
     effects=["read:profiles"],
     data_model=ProfileList
 )
-async def list_profiles(params: ListProfilesParams, ctx) -> ActionResult:
+async def list_profiles(ctx, params: ListProfilesParams) -> ActionResult:
     client = await resolve_client(ctx, params.connection_id)
     items = await client.list_profiles()
     records = [
@@ -42,7 +42,7 @@ async def list_profiles(params: ListProfilesParams, ctx) -> ActionResult:
     effects=["read:posts"],
     data_model=PostList
 )
-async def list_posts(params: ListPostsParams, ctx) -> ActionResult:
+async def list_posts(ctx, params: ListPostsParams) -> ActionResult:
     client = await resolve_client(ctx, params.connection_id)
     items = await client.list_posts(profile_id=params.profile_id or "")
     records = [
@@ -66,7 +66,7 @@ async def list_posts(params: ListPostsParams, ctx) -> ActionResult:
     effects=["create:post"],
     data_model=PostRecord
 )
-async def create_post(params: PublishPostParams, ctx) -> ActionResult:
+async def create_post(ctx, params: PublishPostParams) -> ActionResult:
     client = await resolve_client(ctx, params.connection_id)
     res = await client.create_post(profile_id=params.profile_id, text=params.text, scheduled_at=params.scheduled_at or "")
     if "error" in res:
@@ -90,7 +90,7 @@ async def create_post(params: PublishPostParams, ctx) -> ActionResult:
     effects=["delete:post"],
     data_model=DeleteResult
 )
-async def delete_post(params: DeletePostParams, ctx) -> ActionResult:
+async def delete_post(ctx, params: DeletePostParams) -> ActionResult:
     client = await resolve_client(ctx, params.connection_id)
     ok = await client.delete_post(post_id=params.post_id)
     if not ok:
@@ -106,7 +106,7 @@ async def delete_post(params: DeletePostParams, ctx) -> ActionResult:
     effects=["read:inbox"],
     data_model=InboxList
 )
-async def list_inbox(params: ListInboxParams, ctx) -> ActionResult:
+async def list_inbox(ctx, params: ListInboxParams) -> ActionResult:
     client = await resolve_client(ctx, params.connection_id)
     items = await client.list_inbox(profile_id=params.profile_id or "")
     records = [
@@ -130,7 +130,7 @@ async def list_inbox(params: ListInboxParams, ctx) -> ActionResult:
     effects=["read:health"],
     data_model=HealthAuditResult
 )
-async def audit_social_health(params: ConnectionIdParams, ctx) -> ActionResult:
+async def audit_social_health(ctx, params: ConnectionIdParams) -> ActionResult:
     client = await resolve_client(ctx, params.connection_id)
     profiles = await client.list_profiles()
     posts = await client.list_posts()
