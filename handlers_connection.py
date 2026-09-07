@@ -8,7 +8,7 @@ from schemas import NoParams, ConnectParams, ConnectionIdParams, ConnectionRecor
 from agorapulse_client import AgorapulseClient
 
 async def resolve_client(ctx, connection_id: str = "") -> AgorapulseClient:
-    connections = await ctx.store.get("connections", [])
+    connections = (await ctx.store.get("connections", [])) or []
     if not connections:
         raise ValueError("No Agorapulse connections configured. Use connect_agorapulse first.")
     conn = None
@@ -38,7 +38,7 @@ async def connect_agorapulse(ctx, params: ConnectParams) -> ActionResult:
     if res.get("status") == "error":
         return ActionResult.error(f"Failed to authenticate with Agorapulse: {res.get('error')}")
 
-    connections = await ctx.store.get("connections", [])
+    connections = (await ctx.store.get("connections", [])) or []
     masked = params.access_token[:6] + "..." if len(params.access_token) > 6 else "***"
     record = {
         "id": f"conn_{uuid.uuid4().hex[:8]}",
